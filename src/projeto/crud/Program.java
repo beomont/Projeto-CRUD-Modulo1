@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -19,7 +20,8 @@ public class Program {
 		String opcaoEntrada;
 
 		while (continuar) {
-			System.out.println("Escolha um das opções abaixo: ");
+			System.out.println("--------------------------------------------");
+			System.out.println("Escolha um das opções abaixo: \n");
 			System.out.println("1 - Criar Produto");
 			System.out.println("2 - Listar Produto");
 			System.out.println("3 - Editar Produto");
@@ -27,14 +29,20 @@ public class Program {
 			System.out.println("5 - Pesquisar Produto");
 			System.out.println("6 - Comprar Produto");
 			System.out.println("0 - Sair");
+			System.out.println("--------------------------------------------");
 			opcaoEntrada = sc.nextLine();
 			switch (opcaoEntrada) {
 			case "1" -> cadastraProduto();
 			case "2" -> listaProdutos();
 			case "3" -> editaProduto();
 			case "4" -> excluirProduto();
+			case "5" -> pesquisarProduto();
 			case "0" -> continuar = false; // função pra parar
-			default -> System.out.println("Opção inválida");
+			default -> System.out.println("""
+					********************************************
+					************* OPÇÃO INVÁLIDA! **************
+					********************************************
+					""");
 			}
 		}
 
@@ -57,29 +65,32 @@ public class Program {
 		Files.writeString(path, nome + "|" + preco + "|" + quantidade + "\n", StandardOpenOption.APPEND);
 
 		String produtoCompleto = nome + ", " + preco + ", " + quantidade;
-		
-		System.out.println("\nPRODUTO INSERIDO!\n\n");
+
+		System.out.println("\n************* PRODUTO INSERIDO! ************\n");
 		return produtoCompleto;
 	}
 
-	public static void listaProdutos() throws IOException {
+	public static List<String> listaProdutos() throws IOException {
 		List<String> listaProdutos = Files.readAllLines(path);
 		String nome, preco, quantidade;
 		Integer id = 0;
 		if (listaProdutos.size() == 0) {
 			System.out.println("\nLISTA VAZIA!\n");
 		} else {
-			System.out.println("\n**LISTA PRODUTOS**\n");
+			System.out.println("\n************************** LISTA PRODUTOS ***************************\n");
 			for (String string : listaProdutos) {
 				nome = string.split("\\|")[0];
 				preco = string.split("\\|")[1];
 				quantidade = string.split("\\|")[2];
-				System.out.printf("Produto: %d | Nome: %s | Preço: %s | Quantidade: %s\n", id, nome, preco, quantidade);
+				System.out.printf("Produto: %d | Nome: %-15s | Preço: %-8s | Quantidade: %-4s\n", id, nome, preco,
+						quantidade);
 				id++;
+
 			}
-			System.out.println("\n");
+			System.out.println("\n*********************************************************************\n");
 		}
 
+		return listaProdutos;
 	}
 
 	public static void editaProduto() throws IOException {
@@ -104,10 +115,28 @@ public class Program {
 				listaComExclusao += listaProdutos.get(i) + "\n";
 			}
 			Files.writeString(path, listaComExclusao);
-			
+
 		}
-		System.out.printf("EXCLUSÃO DO PRODUTO (%d) REALIZADA!%n%n", idInput);
+		System.out.printf("\nEXCLUSÃO DO PRODUTO (%d) REALIZADA!%n%n", idInput);
 		return listaComExclusao;
+	}
+
+	public static void pesquisarProduto() throws IOException {
+		System.out.println("Qual produto deseja pesquisar!");
+		String pesqusiarProduto = sc.nextLine().toUpperCase();
+
+		List<String> listaProdutos = listaProdutos();
+		List<String> produtosFiltrados = new ArrayList<>();
+
+		for (int i = 0; i < listaProdutos.size(); i++) {
+			String nomeProduto = listaProdutos.get(i).split("\\|")[0];
+
+			if ((nomeProduto.contains(pesqusiarProduto)) || nomeProduto.equals(pesqusiarProduto)) {
+				produtosFiltrados.add(listaProdutos.get(i));
+			}
+		}
+		System.out.println(produtosFiltrados);
+
 	}
 
 }
