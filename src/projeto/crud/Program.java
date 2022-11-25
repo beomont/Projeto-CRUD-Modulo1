@@ -7,12 +7,10 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 public class Program {
 
-	
 	static Scanner sc = new Scanner(System.in);
 	static Path path = Paths.get("C:\\Users\\Bruno\\eclipse-workspace\\projeto.crud\\produtos.txt");
 
@@ -77,6 +75,7 @@ public class Program {
 		List<String> listaProdutos = Files.readAllLines(path);
 		String nome, preco, quantidade;
 		Integer id = 0;
+
 		if (listaProdutos.size() == 0) {
 			System.out.println("\nLISTA VAZIA!\n");
 		} else {
@@ -96,57 +95,63 @@ public class Program {
 		return listaProdutos;
 	}
 
-
 	public static void editaProduto() throws IOException {
-//		listaProdutos();
-//
-//		List<String> listaProdutos = Files.readAllLines(path);
-//		System.out.println("ID: ");
-//		int id = sc.nextInt();
-//		sc.nextLine();
-//
-//		String produtoEditavel = cadastraProduto();
-//		String stringFinal = "";
-//		
-//		for(int i = 0; i<listaProdutos.size(); i++) {
-//			if (id == i) {
-//			String novoConteudo = listaProdutos.get(i).substring(listaProdutos.get(i).indexOf("\\|"), 7) + "conteudo" + listaProdutos.get(i).substring(15);		
-//			listaProdutos.remove(i);
-//			listaProdutos.add(i, novoConteudo);			
-//			}			
-//		}
-//		
-//		Files.writeString(path, listaProdutos);
-		
-	}
-	
-	
-
-	public static String excluiProduto() throws IOException {
 		listaProdutos();
-		System.out.print("\nQual Produto que deseja excluir? ");
-
-		Integer idInput = sc.nextInt();
-		sc.nextLine();
 
 		List<String> listaProdutos = Files.readAllLines(path);
-		String listaComExclusao = "";
+		System.out.println("Qual produto deseja editar? ");
+		int id = sc.nextInt();
+		sc.nextLine();
+		String listaConcat = "";
+
+		System.out.println("PRODUTO A SER EDITADO: " + listaProdutos.get(id));
+
+		System.out.print("Novo nome do Produto: ");
+		String nome = sc.nextLine();
+
+		System.out.print("Novo preço do Produto: ");
+		String preco = sc.nextLine();
+
+		System.out.print("Nova quantidade do Produto: ");
+		String quantidade = sc.nextLine();
+
+		String produtoEdit = nome + "|" + preco + "|" + quantidade;
+
+		listaProdutos.set(id, produtoEdit);
 
 		for (int i = 0; i < listaProdutos.size(); i++) {
-			if (idInput != i) {
-				listaComExclusao += listaProdutos.get(i) + "\n";
-			}
-			Files.writeString(path, listaComExclusao);
-
+			listaConcat += listaProdutos.get(i) + "\n";
 		}
-		System.out.printf("\nEXCLUSÃO DO PRODUTO (%d) REALIZADA!%n%n", idInput);
-		return listaComExclusao;
+
+		Files.writeString(path, listaConcat);
+		listaProdutos();
+
 	}
-	
+
+	public static void excluiProduto() throws IOException {
+		listaProdutos();
+		List<String> listaProdutos = Files.readAllLines(path);
+		System.out.print("\nQual Produto que deseja excluir? ");
+
+		int id = sc.nextInt();
+		sc.nextLine();
+		String listaComExclusao = "";
+
+		listaProdutos.remove(id);
+
+		for (int i = 0; i < listaProdutos.size(); i++) {
+			listaComExclusao += listaProdutos.get(i) + "\n";
+		}
+
+		Files.writeString(path, listaComExclusao);
+
+		System.out.printf("\nEXCLUSÃO DO PRODUTO (%d) REALIZADA!%n%n", id);
+		listaProdutos();
+	}
 
 	public static void pesquisaProduto() throws IOException {
-		System.out.println("Qual produto deseja pesquisar!");
-		String pesqusiarProduto = sc.nextLine().toUpperCase();
+		System.out.println("Qual produto deseja pesquisar?");
+		String pesquisaProduto = sc.nextLine().toUpperCase();
 
 		List<String> listaProdutos = listaProdutos();
 		List<String> produtosFiltrados = new ArrayList<>();
@@ -154,18 +159,15 @@ public class Program {
 		for (int i = 0; i < listaProdutos.size(); i++) {
 			String nomeProduto = listaProdutos.get(i).split("\\|")[0];
 
-			if ((nomeProduto.equals(pesqusiarProduto) || nomeProduto.contains(pesqusiarProduto))) {
+			if ((nomeProduto.equals(pesquisaProduto) || nomeProduto.contains(pesquisaProduto))) {
 				produtosFiltrados.add(listaProdutos.get(i));
 			}
 		}
 		System.out.println(produtosFiltrados);
 	}
-	
-	
-	
-	
+
 	public static void compraProduto() throws IOException {
-		
+
 		/*
 		 * List<String> listaProdutos = Files.readAllLines(path); listaProdutos();
 		 * System.out.print("Escolha o ID do Produto: "); int id = sc.nextInt();
@@ -202,28 +204,6 @@ public class Program {
 		 * 
 		 * System.out.println(produtoEscolhido);
 		 */
-			}
-		
-		
-		
-	
-		
-		
-		
-		
 	}
 
-
-
-//	public static boolean finalizacaoPrograma(boolean cont) {
-//		System.out.println("Tem certeza que deseja finalizar o programa?");
-//		System.out.println("S - SIM | N - NÃO");
-//		String validaSaida = sc.nextLine().trim().toUpperCase();
-//
-//		if (!(validaSaida == "S")) {
-//			return cont = false;
-//		} else {
-//			return cont = true;
-//		}
-//
-//	}
+}
