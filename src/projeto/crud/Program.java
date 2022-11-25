@@ -7,10 +7,12 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Program {
 
+	
 	static Scanner sc = new Scanner(System.in);
 	static Path path = Paths.get("C:\\Users\\Bruno\\eclipse-workspace\\projeto.crud\\produtos.txt");
 
@@ -35,8 +37,9 @@ public class Program {
 			case "1" -> cadastraProduto();
 			case "2" -> listaProdutos();
 			case "3" -> editaProduto();
-			case "4" -> excluirProduto();
-			case "5" -> pesquisarProduto();
+			case "4" -> excluiProduto();
+			case "5" -> pesquisaProduto();
+			case "6" -> compraProduto();
 			case "0" -> continuar = false; // função pra parar
 			default -> System.out.println("""
 					********************************************
@@ -93,14 +96,33 @@ public class Program {
 		return listaProdutos;
 	}
 
+
 	public static void editaProduto() throws IOException {
-
-		listaProdutos();
-		System.out.print("Qual o Id que deseja editar? ");
-
+//		listaProdutos();
+//
+//		List<String> listaProdutos = Files.readAllLines(path);
+//		System.out.println("ID: ");
+//		int id = sc.nextInt();
+//		sc.nextLine();
+//
+//		String produtoEditavel = cadastraProduto();
+//		String stringFinal = "";
+//		
+//		for(int i = 0; i<listaProdutos.size(); i++) {
+//			if (id == i) {
+//			String novoConteudo = listaProdutos.get(i).substring(listaProdutos.get(i).indexOf("\\|"), 7) + "conteudo" + listaProdutos.get(i).substring(15);		
+//			listaProdutos.remove(i);
+//			listaProdutos.add(i, novoConteudo);			
+//			}			
+//		}
+//		
+//		Files.writeString(path, listaProdutos);
+		
 	}
+	
+	
 
-	public static String excluirProduto() throws IOException {
+	public static String excluiProduto() throws IOException {
 		listaProdutos();
 		System.out.print("\nQual Produto que deseja excluir? ");
 
@@ -120,8 +142,9 @@ public class Program {
 		System.out.printf("\nEXCLUSÃO DO PRODUTO (%d) REALIZADA!%n%n", idInput);
 		return listaComExclusao;
 	}
+	
 
-	public static void pesquisarProduto() throws IOException {
+	public static void pesquisaProduto() throws IOException {
 		System.out.println("Qual produto deseja pesquisar!");
 		String pesqusiarProduto = sc.nextLine().toUpperCase();
 
@@ -131,15 +154,66 @@ public class Program {
 		for (int i = 0; i < listaProdutos.size(); i++) {
 			String nomeProduto = listaProdutos.get(i).split("\\|")[0];
 
-			if ((nomeProduto.contains(pesqusiarProduto)) || nomeProduto.equals(pesqusiarProduto)) {
+			if ((nomeProduto.equals(pesqusiarProduto) || nomeProduto.contains(pesqusiarProduto))) {
 				produtosFiltrados.add(listaProdutos.get(i));
 			}
 		}
 		System.out.println(produtosFiltrados);
-
+	}
+	
+	
+	
+	
+	public static void compraProduto() throws IOException {
+		
+		/*
+		 * List<String> listaProdutos = Files.readAllLines(path); listaProdutos();
+		 * System.out.print("Escolha o ID do Produto: "); int id = sc.nextInt();
+		 * sc.nextLine();
+		 * 
+		 * 
+		 * 
+		 * String produtoEscolhido = "";
+		 * 
+		 * List<String> listaProdutosEscolhidos = new ArrayList<>();
+		 * 
+		 * 
+		 * produtoEscolhido = listaProdutos.get(id);
+		 * 
+		 * // System.out.printf(listaProdutos.get(id)); System.out.println();
+		 * 
+		 * listaProdutosEscolhidos.add(listaProdutos.get(id));
+		 * 
+		 * // System.out.println(listaProdutosEscolhidos.get(0));
+		 * 
+		 * 
+		 * produtoEscolhido = produtoEscolhido.split("\\|")[2]; Integer
+		 * quantidadeProdutoDisponivel = Integer.parseInt(produtoEscolhido);
+		 * 
+		 * System.out.print("Quantidade do Produto escolhido: "); Integer
+		 * quantidadeEscolhida = sc.nextInt();
+		 * 
+		 * if (quantidadeEscolhida >quantidadeProdutoDisponivel) {
+		 * System.out.println("NÃO TEM ESTOQUE SUFICIENTE DESTE PRODUTO!"); } else {
+		 * 
+		 * Integer quantidadeFinal = quantidadeProdutoDisponivel-quantidadeEscolhida;
+		 * 
+		 * }
+		 * 
+		 * System.out.println(produtoEscolhido);
+		 */
+			}
+		
+		
+		
+	
+		
+		
+		
+		
 	}
 
-}
+
 
 //	public static boolean finalizacaoPrograma(boolean cont) {
 //		System.out.println("Tem certeza que deseja finalizar o programa?");
