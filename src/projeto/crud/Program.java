@@ -10,6 +10,17 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Program {
+	/*
+	 * ALUNOS TURMA 939:
+	 * 
+	 * AGAMENON JUNIOR
+	 * BRUNO SANTANA LOPES
+	 * CHRISTIAN DOS SANTOS SILVA
+	 * LUCAS ACIOLE ALBUQUERQUE
+	 * MARCELE MONTALVÃO
+	 * 
+	 * 
+	 * */
 
 	static Scanner sc = new Scanner(System.in);
 	static Path path = Paths.get("C:\\Users\\Bruno\\eclipse-workspace\\projeto.crud\\produtos.txt");
