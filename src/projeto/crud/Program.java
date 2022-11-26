@@ -97,7 +97,6 @@ public class Program {
 
 	public static void editaProduto() throws IOException {
 		listaProdutos();
-
 		List<String> listaProdutos = Files.readAllLines(path);
 		System.out.println("Qual produto deseja editar? ");
 		int id = sc.nextInt();
@@ -107,7 +106,7 @@ public class Program {
 		System.out.println("PRODUTO A SER EDITADO: " + listaProdutos.get(id));
 
 		System.out.print("Novo nome do Produto: ");
-		String nome = sc.nextLine();
+		String nome = sc.nextLine().toUpperCase();
 
 		System.out.print("Novo preço do Produto: ");
 		String preco = sc.nextLine();
@@ -151,9 +150,11 @@ public class Program {
 
 	public static void pesquisaProduto() throws IOException {
 		System.out.println("Qual produto deseja pesquisar?");
-		String pesquisaProduto = sc.nextLine().toUpperCase();
+		String pesquisaProduto = sc.nextLine().toUpperCase().trim();
+		String nome, preco, quantidade;
+		Integer id = 0;
 
-		List<String> listaProdutos = listaProdutos();
+		List<String> listaProdutos = Files.readAllLines(path);
 		List<String> produtosFiltrados = new ArrayList<>();
 
 		for (int i = 0; i < listaProdutos.size(); i++) {
@@ -163,47 +164,106 @@ public class Program {
 				produtosFiltrados.add(listaProdutos.get(i));
 			}
 		}
-		System.out.println(produtosFiltrados);
+
+		System.out.println("\n************************** PRODUTOS PESQUISADOS ***************************\n");
+		for (String string : produtosFiltrados) {
+			nome = string.split("\\|")[0];
+			preco = string.split("\\|")[1];
+			quantidade = string.split("\\|")[2];
+			System.out.printf("Produto: %d | Nome: %-15s | Preço: %-8s | Quantidade: %-4s\n", id, nome, preco,
+					quantidade);
+			id++;
+		}
+		System.out.println("\n*********************************************************************\n");
+
 	}
 
 	public static void compraProduto() throws IOException {
+		boolean continuarComprando = true;
+		List<String> listaProdutos = Files.readAllLines(path);
+		List<String> carrinhoProdutos = new ArrayList<>();
+		String nome;
+		Double valor;
+		Integer quantidadeDisponivel;
+		String produtoSolicitado;
+		Integer quantidadeSolicitada;
 
-		/*
-		 * List<String> listaProdutos = Files.readAllLines(path); listaProdutos();
-		 * System.out.print("Escolha o ID do Produto: "); int id = sc.nextInt();
-		 * sc.nextLine();
-		 * 
-		 * 
-		 * 
-		 * String produtoEscolhido = "";
-		 * 
-		 * List<String> listaProdutosEscolhidos = new ArrayList<>();
-		 * 
-		 * 
-		 * produtoEscolhido = listaProdutos.get(id);
-		 * 
-		 * // System.out.printf(listaProdutos.get(id)); System.out.println();
-		 * 
-		 * listaProdutosEscolhidos.add(listaProdutos.get(id));
-		 * 
-		 * // System.out.println(listaProdutosEscolhidos.get(0));
-		 * 
-		 * 
-		 * produtoEscolhido = produtoEscolhido.split("\\|")[2]; Integer
-		 * quantidadeProdutoDisponivel = Integer.parseInt(produtoEscolhido);
-		 * 
-		 * System.out.print("Quantidade do Produto escolhido: "); Integer
-		 * quantidadeEscolhida = sc.nextInt();
-		 * 
-		 * if (quantidadeEscolhida >quantidadeProdutoDisponivel) {
-		 * System.out.println("NÃO TEM ESTOQUE SUFICIENTE DESTE PRODUTO!"); } else {
-		 * 
-		 * Integer quantidadeFinal = quantidadeProdutoDisponivel-quantidadeEscolhida;
-		 * 
-		 * }
-		 * 
-		 * System.out.println(produtoEscolhido);
-		 */
+		while (continuarComprando) {
+			listaProdutos();
+			System.out.print("Informe o id do produto que deseja comprar: ");
+			Integer id = sc.nextInt();
+			sc.nextLine();
+
+			System.out.print("Informe a quantidade do produto que deseja: ");
+			quantidadeSolicitada = sc.nextInt();
+			sc.nextLine();
+
+			nome = listaProdutos.get(id).split("\\|")[0];
+			valor = Double.parseDouble(listaProdutos.get(id).split("\\|")[1]);
+			quantidadeDisponivel = Integer.parseInt(listaProdutos.get(id).split("\\|")[2]);
+
+			System.out.printf("%n.::PRODUTO ESCOLHIDO::. %nProduto: %s | R$%.2f%n%n", nome, valor);
+
+			if (quantidadeSolicitada > quantidadeDisponivel) {
+				System.out.println("Não há quantidade suficiente em estoque! =( ");
+			} else if (quantidadeSolicitada <= 0) {
+				System.out.println("Por favor informar uma quantidade valida!");
+			} else {
+
+				produtoSolicitado = nome + "|" + valor + "|" + quantidadeSolicitada;
+				carrinhoProdutos.add(produtoSolicitado);
+
+				// Atualiza Estoque Original
+				Integer estoqueAtual = quantidadeDisponivel - quantidadeSolicitada;
+				String produtoEstoqueAtual = nome + "|" + valor + "|" + estoqueAtual;
+				listaProdutos.set(id, produtoEstoqueAtual);
+
+				String atualizaArquivo = "";
+				for (int i = 0; i < listaProdutos.size(); i++) {
+					atualizaArquivo += listaProdutos.get(i) + "\n";
+				}
+
+				Files.writeString(path, atualizaArquivo);
+
+			}
+			System.out.println("***PRODUTO ADICIONADO AO CARRINHO!***\n");
+			System.out.println("DESEJA CONTINUAR COMPRANDO?");
+			System.out.println("S - SIM | N - NÃO");
+			String continua = sc.nextLine().toUpperCase().trim();
+			if (!continua.equals("S")) {
+				continuarComprando = false;
+			}
+		}
+
+		listaCarrinho(carrinhoProdutos);
+	}
+
+	public static void listaCarrinho(List<String> carrinhoProdutos) {
+		String nome, preco, quantidade;
+		Integer id = 1;
+		Double valorTotal = 0.0;
+
+		if (carrinhoProdutos.size() == 0) {
+			System.out.println("\nCARRINHO VAZIO!\n");
+		} else {
+			System.out.println("\n************************** CARRINHO DE COMPRAS ***************************\n");
+			for (String string : carrinhoProdutos) {
+				nome = string.split("\\|")[0];
+				preco = string.split("\\|")[1];
+				quantidade = string.split("\\|")[2];
+				System.out.printf("Item de Compra: %d | Nome: %-15s | Preço: %-8s | Quantidade: %-4s\n", id, nome,
+						preco, quantidade);
+
+				Double precoDouble = Double.parseDouble(preco);
+				Integer quantidadeInt = Integer.parseInt(quantidade);
+				valorTotal += (precoDouble * quantidadeInt);
+				id++;
+
+			}
+			System.out.printf("%n%nVALOR TOTAL DA COMPRA: R$%.2f", valorTotal);
+			System.out.println("\n*********************************************************************\n");
+		}
+
 	}
 
 }
